@@ -1,1 +1,1 @@
-# hmis-invoicing
+# hmis.billing
