@@ -35,7 +35,7 @@ billing_address <- read.csv(paste("data/", billing_quarter, "/5_billing_billing_
 user_course_report <- read.csv(paste("data/", billing_quarter,"/6_hmis-user-licensing-course-report.csv", sep = "")) %>%
   clean_names()
 
-# prep data
+# prepare data
 
 users$email <- tolower(users$email)
 
