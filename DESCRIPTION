@@ -1,11 +1,11 @@
 Package: hmis.billing
-Title: What the Package Does (One Line, Title Case)
+Title: Gathers Data for COHHIO HMIS Billing Purposes
 Version: 0.0.0.9000
 Authors@R: 
     person("Trevin", "Flickinger", , "trevinflickinger@cohhio.org", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: This package provides an easy portal to gathering information
+necessary for billing agencies and HMIS users for COHHIO billing
+License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
