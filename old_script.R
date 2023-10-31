@@ -13,7 +13,7 @@ warning("You will need to enter the billing quarter like 202201", call. = TRUE, 
 
 # billing_quarter <- readline("Enter billing year and quarter like 202204:")
 
-billing_quarter <- "202301"
+billing_quarter <- "202303"
 
 # import reports
 
@@ -79,7 +79,7 @@ hmis_users_overdue_for_renewal <- inner_join(users, not_compliant, by = "email")
 
 write_csv(
   hmis_users_overdue_for_renewal,
-  (paste("data/", billing_quarter, "/output/", "hmis_users_overdue_for_renewal.csv", sep = ""))
+  (paste("data/", billing_quarter, "/hmis_users_overdue_for_renewal.csv", sep = ""))
 )
 
 warning("Above list is overdue for renewal. It has also been written to a csv")
@@ -87,6 +87,7 @@ warning("Above list is overdue for renewal. It has also been written to a csv")
 
 # The following agencies have no HMIS Agency Administrator (Property Manager)
 # Add an error if list includes anything other than system
+# check if the agency admins are active users
 all_agencies <- agency[2]
 agencies_with_aas <- agency_admin_address[2]
 
@@ -128,7 +129,7 @@ program_list <- program_list %>%
 
 billing_data <- left_join(billing_data, program_list, by = "agency_name")
 
-# Join Property Manager and address to table by agency name. This one ruins everything.
+# Join Property Manager and address to table by agency name. This one creates duplicates (not sure why).
 
 agency_admin_address <- agency_admin_address %>%
   select(agency_name, agency_admin, address, city, state, zip_code)
@@ -138,7 +139,7 @@ billing_data <- left_join(billing_data, agency_admin_address, by = "agency_name"
 # Join Agency Admin (Property Manager) name and email address by user id
 
 agency_admin_user_data <- users %>%
-  select(id, email, full_name)
+  dplyr::select(id, email, full_name)
 
 colnames(agency_admin_user_data) <- c("agency_admin", "agency_admin_email", "agency_admin_name")
 
@@ -153,12 +154,11 @@ user_course <- user_course_report %>%
   select(user,
          email,
          completed_date,
-         email,
          company_name)
 
 # change date column to quarter
 
-user_course$completed_date <- lubridate::mdy(user_course$completed_date)
+user_course$completed_date <- lubridate::mdy_hm(user_course$completed_date)
 
 # user_course$completed_date <- lubridate::as_date(user_course$completed_date,
 #                                                  format = "%m/%d/%Y")
@@ -172,7 +172,7 @@ user_course$completed_quarter <- as.character(user_course$completed_quarter)
 user_course$completed_quarter <- str_replace(user_course$completed_quarter, '\\.', "0")
 
 # filter for only this billing quarter
-
+billing_quarter <- "202303"
 user_course <- user_course %>%
   filter(completed_quarter == billing_quarter)
 
@@ -181,7 +181,8 @@ user_course <- merge(x = user_course, y = users[ , c("assigned_staff_home_agency
 user_course$assigned_staff_home_agency[is.na(user_course$assigned_staff_home_agency)] <- user_course$company_name[is.na(user_course$assigned_staff_home_agency)]
 
 
-# From user course, make a quarter 2 summary dataframe
+# From user course, make a summary for users that completed licensing course
+# in the last quarter
 
 quarter_user_count <- user_course %>%
   filter(completed_quarter == billing_quarter)%>%
@@ -225,9 +226,9 @@ warning("Update invoice date", call. = TRUE, immediate. = FALSE, noBreaks. = FAL
 
 billing_data <- billing_data %>%
   mutate(quarter_total = quarter_user_count*175,
-         agency_fee = 550,
+         agency_fee = 0,
          invoice_total = quarter_total+agency_fee,
-         invoice_date = lubridate::today(),
+         invoice_date = lubridate::today()+4,
          invoice_number = paste(billing_quarter,"-",agency_id, sep ="")
   )
 
@@ -280,6 +281,6 @@ billing_data <- billing_data[, col_order]
 
 write_csv(
   billing_data,
-  (paste("data/", billing_quarter, "/output/", billing_quarter, "_billing_data.csv", sep = ""))
+  (paste("data-raw/", billing_quarter, "_billing_data.csv", sep = ""))
 )
 
