@@ -50,6 +50,12 @@ save_billing_statement <- function(billing_statement) {
   billing_statement <- billing_statement[, col_order]
 
   previous_quarter <- get_previous_quarter()
+  directory_path <- "data-raw/statements"
+
+  if (!dir.exists(directory_path)) {
+    # If the directory doesn't exist, create it
+    dir.create(directory_path, recursive = TRUE)
+  }
 
   readr::write_csv(
     billing_statement,
