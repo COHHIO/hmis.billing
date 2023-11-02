@@ -6,7 +6,7 @@ create_billing_statement <- function(billing_list, summarized_user_list) {
 
   # Do math for quarter totals and invoice totals
   previous_quarter <- get_previous_quarter(year = FALSE)
-  agency_fee <- 500 # Not sure what yearly fee is?
+  agency_fee <- 550
 
   billing_statement <- billing_statement %>%
     dplyr::mutate(quarter_total = quarter_user_count * 175,
