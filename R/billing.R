@@ -22,7 +22,7 @@ create_billing_list <- function(users, active_users, programs, agency, agency_ad
     dplyr::summarise(program_list = paste(name, collapse = ", "))
 
   agency_admin_address <- agency_admin_address |>
-    dplyr::select(agency_name, agency_admin, address, city, state, zip_code) |>
+    dplyr::select(agency_name, agency_admin, address, address2, city, state, zip_code) |>
     dplyr::distinct()
 
   # get agency admin name and address

@@ -13,6 +13,6 @@ update_billing_statement <- function() {
   users_this_quarter <- create_course_user_list(user_course_report)
   summarized_user_list <- summarize_course_users(users, users_this_quarter)
 
-  billing_statement <- create_billing_statement(billing_list, summarized_user_list)
+  billing_statement <- create_billing_statement(billing_list, summarized_user_list, billing_address)
   save_billing_statement(billing_statement)
 }

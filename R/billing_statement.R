@@ -1,8 +1,14 @@
-create_billing_statement <- function(billing_list, summarized_user_list) {
+create_billing_statement <- function(billing_list, summarized_user_list, billing_address) {
   # join user list to billing list
   billing_statement <- dplyr::full_join(billing_list, summarized_user_list, by = "agency_name") |>
     dplyr::mutate_at("quarter_user_count", ~replace(., is.na(.), 0)) |>
     dplyr::mutate_at("quarter_user_list", ~replace(., is.na(.), "No HMIS Users renewed or were trained this quarter"))
+
+  # update address on billing statement for select agencies
+  billing_statement <- dplyr::rows_update(
+    billing_statement,
+    dplyr::select(billing_address, agency_name, address, address2, city, state, zip_code),
+    by = "agency_name", unmatched = "ignore")
 
   # Do math for quarter totals and invoice totals
   previous_quarter <- get_previous_quarter(year = FALSE)
@@ -34,6 +40,7 @@ save_billing_statement <- function(billing_statement) {
                  "agency_name",
                  "agency_billing_name",
                  "address",
+                 "address2",
                  "city",
                  "state",
                  "zip_code",
