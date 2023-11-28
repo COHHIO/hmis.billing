@@ -1,6 +1,6 @@
 Package: hmis.billing
 Title: Gathers Data for COHHIO HMIS Billing Purposes
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Trevin", "Flickinger", , "trevinflickinger@cohhio.org", role = c("aut", "cre"))
 Description: This package provides an easy portal to gathering information
