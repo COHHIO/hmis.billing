@@ -19,7 +19,7 @@ create_billing_list <- function(users, active_users, programs, agency, agency_ad
                   agency_active,
                   name,
                   coc_code) |>
-    dplyr::filter(coc_code != "OH-504") |>
+    dplyr::filter(!(coc_code %in% c("OH-504","OH-508"))) |> # filter out HBAH and Mahoning
     dplyr::group_by(agency_name) |>
     dplyr::summarise(program_list = paste(name, collapse = ", "))
 
