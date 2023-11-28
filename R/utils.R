@@ -113,6 +113,33 @@ get_agencies_no_admin <- function(agency = agency,
 
 }
 
+#' Return agencies that don't have an active program
+#'
+#'
+#' @param agency a dataframe
+#' @param programs a dataframe
+#'
+#' @return Returns a message and list of agencies
+#' @export
+#'
+#' @examples
+#' get_agencies_no_active_programs <- function(agency = agency,
+#'                                   programs = programs)
+get_agencies_no_active_programs <- function(agency = agency,
+                                  programs = programs) {
+  # The following agencies have no active programs
+
+  agencies_no_active_programs <- dplyr::anti_join(agency, programs,
+                                        by = dplyr::join_by(agency_name)) |>
+    dplyr::filter(agency_name != "System")
+
+  if (nrow(agencies_no_active_programs) > 0) {
+    message("The below tibble are agencies without an admin:")
+
+    print(agencies_no_active_programs)
+  }
+
+}
 
 
 
