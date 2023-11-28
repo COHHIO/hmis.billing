@@ -24,6 +24,8 @@ load_csv_files <- function() {
 
   files$user_course_report$email <- tolower(files$user_course_report$email)
 
+  files$programs <- dplyr::rename(files$programs, coc_code = co_c_code)
+
   return(files)
 }
 
