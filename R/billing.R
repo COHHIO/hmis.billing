@@ -38,6 +38,7 @@ create_billing_list <- function(users, active_users, programs, agency, agency_ad
   # join users, programs, and agency to billing dataframe
   billing_list <- dplyr::left_join(agency, active_users, by = "agency_name") |>
     dplyr::left_join(program_list, by = "agency_name") |>
+    dplyr::filter(!is.na(program_list) | agency_name == "System") |>
     dplyr::left_join(agency_admin_address, by = "agency_name") |>
     dplyr::left_join(agency_admin_user_data, by = "agency_admin") |>
     dplyr::mutate_at("user_list", ~replace(., is.na(.),

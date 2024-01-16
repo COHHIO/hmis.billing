@@ -1,6 +1,7 @@
 create_billing_statement <- function(billing_list, summarized_user_list, billing_address) {
   # join user list to billing list
   billing_statement <- dplyr::full_join(billing_list, summarized_user_list, by = "agency_name") |>
+    dplyr::filter(!is.na(program_list) | agency_name == "System") |>
     dplyr::mutate_at("quarter_user_count", ~replace(., is.na(.), 0)) |>
     dplyr::mutate_at("quarter_user_list", ~replace(., is.na(.), "No HMIS Users renewed or were trained this quarter"))
 
@@ -8,10 +9,13 @@ create_billing_statement <- function(billing_list, summarized_user_list, billing
   billing_statement <- dplyr::rows_update(
     billing_statement,
     dplyr::select(billing_address, agency_name, address, address2, city, state, zip_code),
-    by = "agency_name", unmatched = "ignore")
+    by = "agency_name", unmatched = "ignore") |>
+    dplyr::mutate(address = ifelse(is.na(address), "", address),
+      address2 = ifelse(is.na(address2), "", address2))
 
   # Do math for quarter totals and invoice totals
   previous_quarter <- get_previous_quarter(year = FALSE)
+  previous_year_quarter <- get_previous_quarter(year = TRUE)
   agency_fee <- 550
 
   billing_statement <- billing_statement %>%
@@ -19,7 +23,8 @@ create_billing_statement <- function(billing_list, summarized_user_list, billing
            agency_fee = dplyr::if_else(previous_quarter == "Q1", agency_fee, 0),
            invoice_total = quarter_total+agency_fee,
            invoice_date = lubridate::today(),
-           invoice_number = paste(previous_quarter,"-",agency_id, sep ="")
+           # YYYYQX-AGENCYID
+           invoice_number = paste(previous_year_quarter,"-",agency_id, sep ="")
     ) |>
     dplyr::filter(invoice_total != 0)
 

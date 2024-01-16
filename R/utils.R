@@ -68,7 +68,7 @@ get_users_not_in_elearning <- function(users = NULL,
 get_users_overdue_renewal <- function(users = NULL,
                                       user_course_report = NULL) {
   not_compliant <- user_course_report |>
-    dplyr::filter(active == "TRUE", compliant == "FALSE") |>
+    dplyr::filter(active == "True", compliant == "False") |>
     dplyr::select(email)
 
   hmis_users_overdue_for_renewal <- dplyr::inner_join(users, not_compliant, by = "email") |>
@@ -134,7 +134,7 @@ get_agencies_no_active_programs <- function(agency = agency,
     dplyr::filter(agency_name != "System")
 
   if (nrow(agencies_no_active_programs) > 0) {
-    message("The below tibble are agencies without an admin:")
+    message("The below tibble are agencies without an active program:")
 
     print(agencies_no_active_programs)
   }
